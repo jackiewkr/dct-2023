@@ -4,7 +4,7 @@
 The aims of the project are to design and build a component tester using the STM32f4 Discovery board. The bare minimum to do is:
  - The resistance of a resistor from 100 Ω to 10 MΩ
  - The capacitance of a capacitor from 100 pF to 10 μF
- - The inductance of an inductor from 100 nH to 100 mH
+ - The inductance of an inductor from 1 μH to 100 mH
  - The saturation current and ideality factor of a diode or LED
 
 ## Installation instructions
