@@ -14,3 +14,7 @@ Instructions for installing:
 
 ## Compilation and uploading
 With the project open in VSCode, check the bottom of the IDE. To build the project, click the checkmark button to see if there are any compilation errors. To compile and upload the project, click the arrow button.
+
+## Project To-Do List
+The To-Do list can be found below. 
+> https://trello.com/invite/b/5hMvmS1p/ATTI74f220357ebcdb0e3b79d291450ef9eeA51D5D3E/software-work
