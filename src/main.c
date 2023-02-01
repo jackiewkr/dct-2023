@@ -2,7 +2,7 @@
 #include "stm32f4xx_hal.h"
 
 /* User libraries */
-#include "adc.h"
+#include <adc.h>
 
 /* glibc libraries */
 #include <stdint.h>
