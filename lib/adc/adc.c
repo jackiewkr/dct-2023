@@ -50,10 +50,15 @@ void ADC_init( void )
 
 double ADC_getVoltage( void )
 {
+        int raw_voltage;
         /* Set SWSTART high and wait until end of conversion */
         ADC1->CR2 |= (ADC_CR2_SWSTART<<ADC_CR2_SWSTART_Pos);
         while (ADC1->SR & (1<<ADC_SR_EOC_Pos) != 1 )
         {} //wait
 
-        
+        /* Read converted value from bottom half od ADC_DR */
+        raw_voltage = ADC1->DR;
+
+        //do voltage conversion????
+        return (double)raw_voltage;
 }
