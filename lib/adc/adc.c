@@ -1,64 +1,62 @@
-#include "stm32f4xx.h"
-
-#include "adc.h"
-/** 
- * Simple ADC register-level library for reading from PA1 (CHANNEL 1) using
- * ADC1.
- * ADC is set up in single conversion mode for simplicity.
+/**
+ * adc.c
+ * =====
+ * Library for using an ADC of the STM32F4 DISCO boards.
+ * This library sets up ADC1 as a 12-bit single conversion ADC that takes input
+ * from channel 15 (linked to pin PC5).
+ *
+ * Measures from 0 - 3.3V
  **/
 
-static void _setup_GPIO( void )
-{
-        //enable GPIOA clock 
-        RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+#include "stm32f4xx_hal.h"
+#include "adc.h"
 
-        //setup GPIOA moder to analogue input for pin 1 
-        GPIOA->MODER &= ~GPIO_MODER_MODER1_Msk;
-        GPIOA->MODER |= (3<<GPIO_MODER_MODER1_Pos);
-}
+/* Set as global variable to reduce user complexity */
+static ADC_HandleTypeDef adc_handle;
 
-static void _setup_ADC1( void )
-{
-        /* Enable ADC1 clock */
-        RCC->APB2ENR &= ~RCC_APB2ENR_ADC1EN_Msk;
-        RCC->APB2ENR |= (1<<RCC_APB2ENR_ADC1EN_Pos);
-
-        /* Set ADC Control Registers 1 & 2 to default states */
-        ADC1->CR1 = (1<<ADC_CR1_DISCEN_Pos); //DISCEN starts high
-        ADC1->CR2 = (1<<ADC_CR2_EOCS_Pos); //EOCS starts high
-
-        /* Set ADC to single conversion mode */
-        ADC1->SQR1 &= ~ADC_SQR1_L_Msk;
-        ADC1->SQR1 |= (0<<ADC_SQR1_L_Pos); //set L to '0000'
-
-        /* Set ADC channel to CHANNEL 1 (PA1) */
-        ADC1->SQR3 &= ~ADC_SQR3_SQ1_Msk;
-        ADC1->SQR3 |= (ADC_SQR3_SQ1_1<<ADC_SQR3_SQ1_Pos); //set ADC1 chan to 1
-
-        /* Enable ADC1 */
-        ADC1->CR2 |= (ADC_CR2_ADON<<ADC_CR2_ADON_Pos);
-}
-
+/* Initialize the ADC and it's corresponding analog channel pin */
 void ADC_init( void )
 {
-        /* Setup GPIO pin PA1 */
-        _setup_GPIO();
-
-        /* Setup ADC1 */
-        _setup_ADC1();
+        /* Configure ADC channel 15's pin as analog input */
+        __HAL_RCC_GPIOC_CLK_ENABLE();
+        GPIO_InitTypeDef adc_pin;
+	adc_pin.Pin = GPIO_PIN_5;
+	adc_pin.Mode = GPIO_MODE_ANALOG;
+	adc_pin.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init( GPIOC, &adc_pin );
+        
+        /* Configure ADC as single conversion, 12-bit */
+        __HAL_RCC_ADC1_CLK_ENABLE();
+        adc_handle.Instance = ADC1;
+	adc_handle.Init.Resolution = ADC_RESOLUTION_12B;
+	adc_handle.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+	adc_handle.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+	adc_handle.Init.ClockPrescaler =ADC_CLOCK_SYNC_PCLK_DIV8; 
+	HAL_ADC_Init( &adc_handle );
+	
+        /* Set ADC's channel to the pin we configured */
+	ADC_ChannelConfTypeDef adc_channel;
+	adc_channel.Channel = ADC_CHANNEL_15;
+	adc_channel.Rank = 1;
+	adc_channel.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+	HAL_ADC_ConfigChannel( &adc_handle, &adc_channel );
 }
 
-double ADC_getVoltage( void )
+/* Get the voltage in millivolts from pin PC5 using the ADC */
+unsigned int ADC_getVoltage( void )
 {
-        int raw_voltage;
-        /* Set SWSTART high and wait until end of conversion */
-        ADC1->CR2 |= (ADC_CR2_SWSTART<<ADC_CR2_SWSTART_Pos);
-        while (ADC1->SR & (1<<ADC_SR_EOC_Pos) != 1 )
-        {} //wait
+        unsigned int raw_voltage = 0;
+        
+        /* Start ADC conversion and wait until completed */
+        HAL_ADC_Start( &adc_handle );
+        while ( HAL_ADC_PollForConversion( &adc_handle, 5 ) != HAL_OK )
+        {
+                /* Get raw ADC value from 0-4096 */
+                raw_voltage = HAL_ADC_GetValue( &adc_handle ); 
+        }
+        /* Stop ADC conversion once we get a value */
+        HAL_ADC_Stop( &adc_handle ); 
 
-        /* Read converted value from bottom half od ADC_DR */
-        raw_voltage = ADC1->DR;
-
-        //do voltage conversion????
-        return (double)raw_voltage;
+        /* Returns the raw value converted into millivolts */
+        return (raw_voltage * 3300 ) / 4096;
 }

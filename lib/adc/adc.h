@@ -1,12 +1,15 @@
 #ifndef __ADC_H
 #define __ADC_H
 /**
- * Simple ADC library. Uses only 1 channel on 1 ADC at the moment.
- * To input, connect analog source to pin PA1.
+ * adc.h
+ * =====
+ * Simple ADC library that reads voltage from pin PC5 on the STM32F4 DISCO board
  **/
 
+/* Initialize the ADC */
 void ADC_init( void );
 
-double ADC_getVoltage( void );
+/* Returns the voltage in millivolts */
+unsigned int ADC_getVoltage( void );
 
-#endif //__ADC_H
+#endif /* __ADC_H */
