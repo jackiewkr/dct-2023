@@ -1,39 +1,42 @@
 /* STM inbuilt library */
 #include "stm32f4xx.h"
 
-/* User libraries */
+/* User Libraries */
 #include "led.h"
-#include "serial.h"
 #include "adc.h"
 
-/* glibc libraries */
-#include <stdio.h>
-
-/** Function declarations **/
+/* Simple delay function using NOP */
 void delay_ms( int ms );
 
-int main() {
-        /* Initialize all libraries */
+/* MAIN PROGRAM */
+int main( void )
+{
+        /* Test program for checking if the ADC works.
+         * Check using Keil's inbuilt variable viewer */
+        double voltage = 0;
+        int cntr = 0;
+        
+        /* Initialize libraries */
         LED_init();
         ADC_init();
-        SERIAL_init();
-
-        int voltage;
-        char buf[32];
+        
+        LED_on( 3 );
         while (1)
         {
                 delay_ms( 100 );
-                voltage = ADC_getVoltage();
+                LED_off( 3 );
+                
 
-                snprintf( buf, 32, "%f", voltage );
-                SERIAL_send( buf, 32 );
+                voltage = ADC_getVoltage();
+                LED_on( 3 );
+                cntr++;
         }
+        
+        /*return 0;*/
 }
 
 void delay_ms( volatile int ms )
 {
         int j;
-        for (j = 0; j < ms*4000; j++)
-        {}  /* excute NOP for 1ms */
+        for ( j = 0; j < ms * 4000; j++ );
 }
-
