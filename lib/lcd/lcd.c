@@ -209,3 +209,12 @@ void LCD_WriteString(char *s, int n) {
     while (*s && n--)
         LCD_Write(DATA, *s++);
 }
+
+/*
+ * Wrapper function clears the screen and prints a string
+ */
+void LCD_OverWriteString(char *s, int n) {
+    LCD_Write(INSTRUCTION, 0x01);
+    while (*s && n--)
+        LCD_Write(DATA, *s++);
+}
