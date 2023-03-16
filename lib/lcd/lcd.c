@@ -1,6 +1,8 @@
 #include "stm32f4xx_hal.h"
 #include "lcd.h"
 
+enum eLCD_OP {INSTRUCTION, DATA};
+
 /*
  * Configures a specified pin in the GPIO port as an input that is suitable 
  * for reading. Just provide the pin number and port name as parameters
@@ -91,6 +93,40 @@ uint8_t LCD_Is_Busy() {
 }
 
 /*
+ * Function for writing a byte to the LCD
+ */
+void LCD_Write(enum eLCD_OP opcode, uint8_t data) {
+    // Waiting for the LCD to be ready
+    while (LCD_Is_Busy());
+
+    // Setting RS according to the opcode
+    if (opcode == DATA)
+        GPIOA->BSRR = 1UL << 14;
+    else if (opcode == INSTRUCTION)
+        GPIOA->BSRR = 1UL << 30;
+    else 
+        return;
+
+    // Creating variables for the upper and lower part of the byte
+    unsigned int upper_bits = data & 0xF0;
+    unsigned int lower_bits = (data << 4) & 0xF0;
+
+    // Writing the upper bits to the LCD
+    GPIOD->ODR = upper_bits;
+    LCD_Delay(100);
+    GPIOB->BSRR = 1UL << 7;
+    LCD_Delay(100);
+    GPIOB->BSRR = 1UL << 23;
+
+    // Writing the lower bits to the LCD
+    GPIOD->ODR = lower_bits;
+    LCD_Delay(100);
+    GPIOB->BSRR = 1UL << 7;
+    LCD_Delay(100);
+    GPIOB->BSRR = 1UL << 23;
+}
+
+/*
  * Setup function for the LCD
  */
 void LCD_Init() {
@@ -135,4 +171,17 @@ void LCD_Init() {
     GPIOB->BSRR = 1UL << 7;
     LCD_Delay(100);
     GPIOB->BSRR = 1UL << 23;
+
+    // Setting up the characteristics of the LCD
+    // 4 bit mode, 2 lines
+    LCD_Write(INSTRUCTION, 0x28);
+
+    // Display on / off control 
+    LCD_Write(INSTRUCTION, 0x0C);
+
+    // Increment Entry mode
+    LCD_Write(INSTRUCTION, 0x06);
+
+    // Clearing the display
+    LCD_Write(INSTRUCTION, 0x01);
 }
