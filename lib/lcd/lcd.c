@@ -193,3 +193,19 @@ void LCD_Clear() {
     LCD_Write(INSTRUCTION, 0x01);
 }
 
+/*
+ * Function for writing a single char to the LCD
+ * ASCII values are valid for 0x20 to 0x7E
+ */
+void LCD_WriteChar(char ch) {
+    LCD_Write(DATA, ch);
+}
+
+/*
+ * Function for writing a full string of n length
+ * to the LCD
+ */
+void LCD_WriteString(char *s, int n) {
+    while (*s && n--)
+        LCD_Write(DATA, *s++);
+}
