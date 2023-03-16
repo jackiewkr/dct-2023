@@ -60,8 +60,8 @@ uint8_t LCD_Is_Busy() {
     
     // Selecting the instruction register on the LCD
     // and setting the LCD to read mode
-    GPIOA->BSRR = 1UL << 30;
-    GPIOA->BSRR |= 1UL << 13;
+    GPIOC->BSRR = 1UL << 27;
+    GPIOC->BSRR |= 1UL << 10;
 
     // Setting E high, which behaves like a clock signal
     LCD_Delay(100);
@@ -85,7 +85,7 @@ uint8_t LCD_Is_Busy() {
     LCD_Delay(100);
 
     // Setting the LCD back to write mode
-    GPIOA->BSRR = 1UL << 29;
+    GPIOC->BSRR = 1UL << 26;
     LCD_Delay(100);
 
     return busy;
@@ -100,9 +100,9 @@ void LCD_Write(enum eLCD_OP opcode, uint8_t data) {
 
     // Setting RS according to the opcode
     if (opcode == DATA)
-        GPIOA->BSRR = 1UL << 14;
+        GPIOC->BSRR = 1UL << 11;
     else if (opcode == INSTRUCTION)
-        GPIOA->BSRR = 1UL << 30;
+        GPIOC->BSRR = 1UL << 27;
     else 
         return;
 
@@ -146,23 +146,23 @@ void LCD_Delay(volatile int time_us) {
  */
 void LCD_Init() {
     // Initialising the GPIO clocks
-    RCC-> AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+    RCC-> AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
     RCC-> AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
     RCC-> AHB1ENR |= RCC_AHB1ENR_GPIODEN;
 
     /*
      * Setting our control lines to be outputs. 
-     * PA14 - Connected to RS (default logic low)
-     * PA13 - Connected to RW (default logic low)
+     * PC11 - Connected to RS (default logic low)
+     * PC10 - Connected to RW (default logic low)
      * PB7 - Connected to E (default logic low)
      */
-    LCD_Set_As_Output(14, GPIOA);
-    LCD_Set_As_Output(13, GPIOA);
+    LCD_Set_As_Output(11, GPIOC);
+    LCD_Set_As_Output(10, GPIOC);
     LCD_Set_As_Output(7, GPIOB);
 
-    // Setting PA14 (RS), PA13 (RW), PB7 (E) to logic low
-    GPIOA->BSRR = 1UL << 30;
-    GPIOA->BSRR = 1UL << 29;
+    // Setting PC11 (RS), PC10 (RW), PB7 (E) to logic low
+    GPIOC->BSRR = 1UL << 27;
+    GPIOC->BSRR = 1UL << 26;
     GPIOB->BSRR = 1UL << 23;
 
     // Setting the data lines PD4, PD5, PD6, PD7 to outputs

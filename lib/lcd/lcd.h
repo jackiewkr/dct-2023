@@ -10,8 +10,8 @@
  * Vd -> Output of potentiometer between 5V and Ground
  * LED Anode -> 5V
  * LED Cathode -> Ground
- * RS -> PA14
- * RW -> PA13
+ * RS -> PA14 (which is now PC11)
+ * RW -> PA13 (which is now PC10)
  * E -> PB7
  * D4 -> PD4
  * D5 -> PD5
