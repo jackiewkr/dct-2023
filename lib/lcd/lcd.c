@@ -120,4 +120,19 @@ void LCD_Init() {
 
     // Waiting for the LCD to be ready before we move on
     while (LCD_Is_Busy());
+
+    // Sending a signal to E to clear it
+    LCD_Delay(100);
+    GPIOB->BSRR = 1UL << 7;
+    LCD_Delay(100);
+    GPIOB->BSRR = 1UL << 23;
+
+    // Writing the instruction to put the LCD into 4 bit mode
+    GPIOD->ODR = 0x20;
+
+    // Sending a signal to E to put the instruction through
+    LCD_Delay(100);
+    GPIOB->BSRR = 1UL << 7;
+    LCD_Delay(100);
+    GPIOB->BSRR = 1UL << 23;
 }
