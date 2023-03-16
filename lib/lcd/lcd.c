@@ -30,16 +30,6 @@ void LCD_Set_As_Output(int pin, GPIO_TypeDef *port) {
 }
 
 /*
- * Delay function for the LCD (timing is nowhere near exact and not tested)
- */
-void LCD_Delay(volatile int time_us) {
-    // Factor between the system core clock (believe 16MHz) and 16MHz
-    float i = (float) SystemCoreClock / (float) 16e6;
-    volatile unsigned long count = (unsigned long) (i * (36 * time_us >> 4));
-    while (--count > 0);
-}
-
-/*
  * Reads and returns the value of a pin configured as an
  * input
  */
@@ -124,6 +114,22 @@ void LCD_Write(enum eLCD_OP opcode, uint8_t data) {
     GPIOB->BSRR = 1UL << 7;
     LCD_Delay(100);
     GPIOB->BSRR = 1UL << 23;
+}
+
+/*
+ * 
+ * HEADER FILE FUNCTIONS BELOW
+ * 
+ */
+
+/*
+ * Delay function for the LCD (timing is nowhere near exact and not tested)
+ */
+void LCD_Delay(volatile int time_us) {
+    // Factor between the system core clock (believe 16MHz) and 16MHz
+    float i = (float) SystemCoreClock / (float) 16e6;
+    volatile unsigned long count = (unsigned long) (i * (36 * time_us >> 4));
+    while (--count > 0);
 }
 
 /*
