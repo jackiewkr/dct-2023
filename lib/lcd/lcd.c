@@ -4,6 +4,15 @@
 enum eLCD_OP {INSTRUCTION, DATA};
 
 /*
+ * Simple swap function for swapping two chars
+ */
+void swap(char *a, char *b) {
+    char temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+/*
  * Configures a specified pin in the GPIO port as an input that is suitable 
  * for reading. Just provide the pin number and port name as parameters
  */
@@ -223,4 +232,26 @@ void LCD_OverWriteString(char *s, int n) {
     LCD_Write(INSTRUCTION, 0x01);
     while (*s && n--)
         LCD_Write(DATA, *s++);
+}
+
+/*
+ * Function takes a voltage in millivolts as an integer
+ * and converts it to a string, ready to be passed to 
+ * WriteString or OverWriteString
+ */
+void LCD_VoltToStr(int voltage, char *str) {
+    int n = 0;
+    if (voltage == 0) {
+        str[n++] = '0';
+    } else {
+        while (voltage > 0) {
+            str[n++] = (voltage % 10) + '0';
+            voltage = voltage / 10;
+        }
+    }
+    str[n] = '\0';
+
+    for (int i = 0; i < n / 2; ++i) {
+        swap(&str[i], &str[n - 1 - i]);
+    }
 }
