@@ -185,3 +185,11 @@ void LCD_Init() {
     // Clearing the display
     LCD_Write(INSTRUCTION, 0x01);
 }
+
+/*
+ * Function for clearing the LCD screen
+ */
+void LCD_Clear() {
+    LCD_Write(INSTRUCTION, 0x01);
+}
+
