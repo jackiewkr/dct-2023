@@ -28,6 +28,16 @@ void LCD_Set_As_Output(int pin, GPIO_TypeDef *port) {
 }
 
 /*
+ * Delay function for the LCD (timing is nowhere near exact and not tested)
+ */
+void LCD_Delay(volatile int time_us) {
+    // Factor between the system core clock (believe 16MHz) and 16MHz
+    float i = (float) SystemCoreClock / (float) 16e6;
+    volatile unsigned long count = (unsigned long) (i * (36 * time_us >> 4));
+    while (--count > 0);
+}
+
+/*
  * Reads and returns the value of a pin configured as an
  * input
  */
@@ -110,19 +120,4 @@ void LCD_Init() {
 
     // Waiting for the LCD to be ready before we move on
     while (LCD_Is_Busy());
-
-    // Sending a signal to E to clear it
-    LCD_Delay(100);
-    GPIOB->BSRR = 1UL << 7;
-    LCD_Delay(100);
-    GPIOB->BSRR = 1UL << 23;
-
-    // Writing the instruction to put the LCD into 4 bit mode
-    GPIOD->ODR = 0x20;
-
-    // Sending a signal to E to put the instruction through
-    LCD_Delay(100);
-    GPIOB->BSRR = 1UL << 7;
-    LCD_Delay(100);
-    GPIOB->BSRR = 1UL << 23;
 }
