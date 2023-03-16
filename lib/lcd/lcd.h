@@ -51,4 +51,10 @@ void LCD_WriteString(char *s, int n);
  */
 void LCD_OverWriteString(char *s, int n);
 
+/*
+ * Converts a given voltage into a string and stores
+ * it in the provided string, ready for output
+ */
+void LCD_VoltToStr(int voltage, char *str);
+
 #endif
