@@ -2,8 +2,6 @@
  * adc.c
  * =====
  * Library for using an ADC of the STM32F4 DISCO boards.
- * This library sets up ADC1 as a 12-bit single conversion ADC that takes input
- * from channel 15 (linked to pin PC5).
  *
  * Measures from 0 - 3.3V
  **/
@@ -11,52 +9,66 @@
 #include "stm32f4xx_hal.h"
 #include "adc.h"
 
-/* Set as global variable to reduce user complexity */
-static ADC_HandleTypeDef adc_handle;
+static ADC_HandleTypeDef hadc1; //ADC Handler
 
-/* Initialize the ADC and it's corresponding analog channel pin */
-void ADC_init( void )
+static void ADC_SetupPin(void)
 {
-        /* Configure ADC channel 15's pin as analog input */
+        GPIO_InitTypeDef GPIO_InitStruct = {0};
+
         __HAL_RCC_GPIOC_CLK_ENABLE();
-        GPIO_InitTypeDef adc_pin;
-	adc_pin.Pin = GPIO_PIN_5;
-	adc_pin.Mode = GPIO_MODE_ANALOG;
-	adc_pin.Pull = GPIO_NOPULL;
-	HAL_GPIO_Init( GPIOC, &adc_pin );
-        
-        /* Configure ADC as single conversion, 12-bit */
-        __HAL_RCC_ADC1_CLK_ENABLE();
-        adc_handle.Instance = ADC1;
-	adc_handle.Init.Resolution = ADC_RESOLUTION_12B;
-	adc_handle.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
-	adc_handle.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-	adc_handle.Init.ClockPrescaler =ADC_CLOCK_SYNC_PCLK_DIV8; 
-	HAL_ADC_Init( &adc_handle );
-	
-        /* Set ADC's channel to the pin we configured */
-	ADC_ChannelConfTypeDef adc_channel;
-	adc_channel.Channel = ADC_CHANNEL_15;
-	adc_channel.Rank = 1;
-	adc_channel.SamplingTime = ADC_SAMPLETIME_15CYCLES;
-	HAL_ADC_ConfigChannel( &adc_handle, &adc_channel );
+
+        GPIO_InitStruct.Pin = GPIO_PIN_5;
+        GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        HAL_GPIO_Init( GPIOC, GPIO_InitStruct );
 }
 
-/* Get the voltage in millivolts from pin PC5 using the ADC */
-unsigned int ADC_getVoltage( void )
+void ADC_Init(void)
 {
-        unsigned int raw_voltage = 0;
+        ADC_SetupPin();
         
-        /* Start ADC conversion and wait until completed */
-        HAL_ADC_Start( &adc_handle );
-        while ( HAL_ADC_PollForConversion( &adc_handle, 5 ) != HAL_OK )
-        {
-                /* Get raw ADC value from 0-4096 */
-                raw_voltage = HAL_ADC_GetValue( &adc_handle ); 
-        }
-        /* Stop ADC conversion once we get a value */
-        HAL_ADC_Stop( &adc_handle ); 
+        ADC_ChannelConfTypeDef sConfig = {0};
 
-        /* Returns the raw value converted into millivolts */
-        return (raw_voltage * 3300 ) / 4096;
+        /* configure adc1 features */
+        hadc1.Instance = ADC1;
+        hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
+        hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+        hadc1.Init.ScanConvMode = DISABLE;
+        hadc1.Init.ContinuousConvMode = ENABLE;
+        hadc1.Init.DiscontinuousConvMode = DISABLE;
+        hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+        hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+        hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+        hadc1.Init.NbrOfConversion = 1;
+        hadc1.Init.DMAContinuousRequests = DISABLE;
+        hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+        
+        HAL_ADC_Init(&hadc1);
+
+        /* configure ADC channel to channel 15*/
+        sConfig.Channel = ADC_CHANNEL_15;
+        sConfig.Rank = 1;
+        sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+        
+        HAL_ADC_ConfigChannel(&hadc1, &sConfig)
+
+}
+
+/* Raw voltage btwn 0-4096, so divide by 4096 and multiply btwn 3300 to get
+ * voltage in millivolts */
+static uint16_t ADC_RawToMillivolt( uint16_t raw )
+{
+        return ( raw / 4096 ) * 3300;
+}
+
+/* Measures analog value on pin PC5 */
+uint16_t ADC_Measure( void )
+{
+	HAL_ADC_Start( hadc1 );
+	HAL_ADC_PollForConversion( hadc1, HAL_MAX_DELAY );
+        
+        uint16_t total = HAL_ADC_GetValue( hadc1 );
+        
+	HAL_ADC_Stop( hadc1 );
+	return total;
 }

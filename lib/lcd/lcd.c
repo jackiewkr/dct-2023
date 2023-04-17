@@ -239,7 +239,7 @@ void LCD_OverWriteString(char *s, int n) {
  * and converts it to a string, ready to be passed to 
  * WriteString or OverWriteString
  */
-void LCD_VoltToStr(int voltage, char *str) {
+int LCD_VoltToStr(int voltage, char *str) {
     int n = 0;
     if (voltage == 0) {
         str[n++] = '0';
@@ -254,4 +254,6 @@ void LCD_VoltToStr(int voltage, char *str) {
     for (int i = 0; i < n / 2; ++i) {
         swap(&str[i], &str[n - 1 - i]);
     }
+
+    return n;
 }

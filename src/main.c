@@ -17,19 +17,21 @@ int main( void )
         int cntr = 0;
         
         /* Initialize libraries */
-        LED_init();
-        ADC_init();
-        
-        LED_on( 3 );
+        LCD_Init();
+        ADC_Init();
+
+        LCD_Clear();
+
+        char* buf = NULL;
         while (1)
         {
                 delay_ms( 100 );
-                LED_off( 3 );
-                
 
-                voltage = ADC_getVoltage();
-                LED_on( 3 );
-                cntr++;
+                LCD_Clear();
+                
+                voltage = ADC_Measure();
+                int buf_sz = LCD_VoltToStr( voltage, buf );
+                LCD_WriteString( buf, buf_sz );
         }
         
         /*return 0;*/
