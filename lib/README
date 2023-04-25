@@ -1,6 +1,0 @@
-This directory contains our user-created libraries for our project.
-Each library is in their own folder i.e. led library files in led/
-
-Include in the mainfile as such:
-
-#include <foo.h>
