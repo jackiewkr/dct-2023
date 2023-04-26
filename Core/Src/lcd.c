@@ -6,7 +6,7 @@ enum eLCD_OP {INSTRUCTION, DATA};
 /*
  * Simple swap function for swapping two chars
  */
-void swap(char *a, char *b) {
+static void swap(char *a, char *b) {
     char temp = *a;
     *a = *b;
     *b = temp;
@@ -16,7 +16,7 @@ void swap(char *a, char *b) {
  * Configures a specified pin in the GPIO port as an input that is suitable 
  * for reading. Just provide the pin number and port name as parameters
  */
-void LCD_Set_As_Input(int pin, GPIO_TypeDef *port) {
+static void LCD_Set_As_Input(int pin, GPIO_TypeDef *port) {
     // Setting MODER to input
     // Setting PUPDR to no pull up / pull down
     unsigned long mask = ~(3UL << 2 * pin);
@@ -28,7 +28,7 @@ void LCD_Set_As_Input(int pin, GPIO_TypeDef *port) {
  * Configures a specified pin in the GPIO port as a general purpose, push-pull
  * output. Just provide the pin number and port name as parameters
  */
-void LCD_Set_As_Output(int pin, GPIO_TypeDef *port) {
+static void LCD_Set_As_Output(int pin, GPIO_TypeDef *port) {
     // Setting MODER to general purpose output mode
     // Setting OTYPER to push pull output mode
     // Setting PUPDR to no pull up / pull down
@@ -42,7 +42,7 @@ void LCD_Set_As_Output(int pin, GPIO_TypeDef *port) {
  * Reads and returns the value of a pin configured as an
  * input
  */
-uint8_t LCD_Read_Pin(int pin, GPIO_TypeDef *port) {
+static uint8_t LCD_Read_Pin(int pin, GPIO_TypeDef *port) {
     return (port->IDR & 1 << pin) >> pin;
 }
 
@@ -50,7 +50,7 @@ uint8_t LCD_Read_Pin(int pin, GPIO_TypeDef *port) {
  * Reads the value of PD7 to see if the LCD is currently 
  * in the middle of an internal operation
  */
-uint8_t LCD_Is_Busy() {
+static uint8_t LCD_Is_Busy( void ) {
     uint8_t busy;
 
     // Setting the data lines to be inputs for reading
@@ -94,7 +94,7 @@ uint8_t LCD_Is_Busy() {
 /*
  * Function for writing a byte to the LCD
  */
-void LCD_Write(enum eLCD_OP opcode, uint8_t data) {
+static void LCD_Write(enum eLCD_OP opcode, uint8_t data) {
     // Waiting for the LCD to be ready
     while (LCD_Is_Busy());
 
@@ -144,7 +144,7 @@ void LCD_Delay(volatile int time_us) {
 /*
  * Setup function for the LCD
  */
-void LCD_Init() {
+void LCD_Init( void ) {
     // Initialising the GPIO clocks
     RCC-> AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
     RCC-> AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
@@ -204,7 +204,7 @@ void LCD_Init() {
 /*
  * Function for clearing the LCD screen
  */
-void LCD_Clear() {
+void LCD_Clear( void ) {
     LCD_Write(INSTRUCTION, 0x01);
 }
 
@@ -212,7 +212,7 @@ void LCD_Clear() {
  * Function for writing a single char to the LCD
  * ASCII values are valid for 0x20 to 0x7E
  */
-void LCD_WriteChar(char ch) {
+void LCD_WriteChar( char ch ) {
     LCD_Write(DATA, ch);
 }
 
@@ -220,7 +220,7 @@ void LCD_WriteChar(char ch) {
  * Function for writing a full string of n length
  * to the LCD
  */
-void LCD_WriteString(char *s, int n) {
+void LCD_WriteString( char *s, int n ) {
     while (*s && n--)
         LCD_Write(DATA, *s++);
 }
@@ -228,7 +228,7 @@ void LCD_WriteString(char *s, int n) {
 /*
  * Wrapper function clears the screen and prints a string
  */
-void LCD_OverWriteString(char *s, int n) {
+void LCD_OverWriteString( char *s, int n ) {
     LCD_Write(INSTRUCTION, 0x01);
     while (*s && n--)
         LCD_Write(DATA, *s++);
@@ -239,7 +239,7 @@ void LCD_OverWriteString(char *s, int n) {
  * and converts it to a string, ready to be passed to 
  * WriteString or OverWriteString
  */
-int LCD_VoltToStr(int voltage, char *str) {
+int LCD_VoltToStr( int voltage, char *str ) {
     int n = 0;
     if (voltage == 0) {
         str[n++] = '0';
