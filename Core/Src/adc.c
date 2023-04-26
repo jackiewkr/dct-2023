@@ -57,7 +57,7 @@ void ADC_Init(void)
  * voltage in millivolts */
 static uint16_t ADC_RawToMillivolt( uint16_t raw )
 {
-        return ( raw / 4096 ) * 3300;
+        return ( raw * 3300 ) / 4096;
 }
 
 /* Measures analog value on pin PC5 */
@@ -69,5 +69,5 @@ uint16_t ADC_Measure( void )
         uint16_t total = HAL_ADC_GetValue( &hadc1 );
         
 	HAL_ADC_Stop( &hadc1 );
-	return total;
+	return ADC_RawToMillivolt( total );
 }
