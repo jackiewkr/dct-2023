@@ -850,7 +850,7 @@ ARM Macro Assembler    Page 14
 
 
 stm32f407xx.o -I.\RTE\_jackie-mdkarm -IC:\KEIL_V5\ARM\PACK\ARM\CMSIS\5.8.0\CMSI
-S\Core\Include -IC:\KEIL_V5\ARM\PACK\Keil\STM32F4xx_DFP\2.15.0\Drivers\CMSIS\De
+S\Core\Include -IC:\KEIL_V5\ARM\PACK\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\De
 vice\ST\STM32F4xx\Include --predefine="__UVISION_VERSION SETA 535" --predefine=
 "_RTE_ SETA 1" --predefine="STM32F407xx SETA 1" --predefine="_RTE_ SETA 1" --li
 st=startup_stm32f407xx.lst startup_stm32f407xx.s

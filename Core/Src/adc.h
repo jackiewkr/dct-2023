@@ -3,8 +3,15 @@
 
 #include "stm32f4xx_hal.h"
 
+struct ADC_Output
+{
+	uint16_t v_a;
+	uint16_t v_b;
+	uint16_t v_c;
+};
+
 void ADC_Init( void );
 
-uint16_t ADC_Measure( void );
+struct ADC_Output ADC_Measure( void );
 
 #endif

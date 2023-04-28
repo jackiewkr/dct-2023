@@ -21,18 +21,18 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.9.0
 Dialog DLL:      TCM.DLL V1.53.0.0
  
 <h2>Project:</h2>
-\\userfs\jw4034\w2k\Downloads\jackie-mdkarm\jackie-mdkarm\MDK-ARM\jackie-mdkarm.uvprojx
-Project File Date:  04/25/2023
+\\userfs\jw4034\w2k\big\dct-2023\MDK-ARM\jackie-mdkarm.uvprojx
+Project File Date:  04/28/2023
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'c:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'jackie-mdkarm'
-compiling adc.c...
-..\Core\Src\adc.c(58): warning:  #177-D: function "ADC_RawToMillivolt"  was declared but never referenced
-  static uint16_t ADC_RawToMillivolt( uint16_t raw )
-..\Core\Src\adc.c: 1 warning, 0 errors
+compiling main.c...
+../Core/Src/button.h(3): warning:  #1-D: last line of file ends without a newline
+  int Button_isPressed( void );
+../Core/Src/main.c: 1 warning, 0 errors
 linking...
-Program Size: Code=5690 RO-data=442 RW-data=16 ZI-data=1704  
+Program Size: Code=6582 RO-data=442 RW-data=16 ZI-data=1848  
 FromELF: creating hex file...
 "jackie-mdkarm\jackie-mdkarm.axf" - 0 Error(s), 1 Warning(s).
 
@@ -45,20 +45,20 @@ Package Vendor: ARM
    * Component: CORE Version: 5.5.0
 
 Package Vendor: Keil
-                http://www.keil.com/pack/Keil.STM32F4xx_DFP.2.15.0.pack
-                Keil.STM32F4xx_DFP.2.15.0
+                http://www.keil.com/pack/Keil.STM32F4xx_DFP.2.16.0.pack
+                Keil.STM32F4xx_DFP.2.16.0
                 STMicroelectronics STM32F4 Series Device Support, Drivers and Examples
 
 <h2>Collection of Component include folders:</h2>
   .\RTE\_jackie-mdkarm
   C:\KEIL_V5\ARM\PACK\ARM\CMSIS\5.8.0\CMSIS\Core\Include
-  C:\KEIL_V5\ARM\PACK\Keil\STM32F4xx_DFP\2.15.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
+  C:\KEIL_V5\ARM\PACK\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
 
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.5.0
       Include file:  CMSIS\Core\Include\tz_context.h
-Build Time Elapsed:  00:00:06
+Build Time Elapsed:  00:00:07
 </pre>
 </body>
 </html>
