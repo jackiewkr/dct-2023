@@ -30,11 +30,13 @@ Build target 'jackie-mdkarm'
 compiling main.c...
 ../Core/Src/button.h(3): warning:  #1-D: last line of file ends without a newline
   int Button_isPressed( void );
-../Core/Src/main.c: 1 warning, 0 errors
+../Core/Src/main.c(94): warning:  #174-D: expression has no effect
+      state.prev_logic_level;
+../Core/Src/main.c: 2 warnings, 0 errors
 linking...
-Program Size: Code=6474 RO-data=442 RW-data=16 ZI-data=1848  
+Program Size: Code=7726 RO-data=442 RW-data=20 ZI-data=1852  
 FromELF: creating hex file...
-"jackie-mdkarm\jackie-mdkarm.axf" - 0 Error(s), 1 Warning(s).
+"jackie-mdkarm\jackie-mdkarm.axf" - 0 Error(s), 2 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -58,7 +60,7 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:CORE:5.5.0
       Include file:  CMSIS\Core\Include\tz_context.h
-Build Time Elapsed:  00:00:06
+Build Time Elapsed:  00:00:07
 </pre>
 </body>
 </html>

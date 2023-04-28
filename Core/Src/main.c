@@ -24,6 +24,9 @@ struct State
     /* 100u = 0, 1m for inductors */
     uint8_t range; //range of current measurement
     
+    uint8_t prev_logic_level;
+    uint8_t logic_level;
+    
     struct ADC_Output output;
 };
 
@@ -44,7 +47,7 @@ void outputLogic0( void )
     GPIOA->BSRR = 1<<(7+16);
 }
 
-void outputLogic1( void )
+void outputLogic2( void )
 {
     //A
     GPIOA->BSRR = 1<<(4);
@@ -54,7 +57,7 @@ void outputLogic1( void )
     GPIOA->BSRR = 1<<(7+16);
 }
 
-void outputLogic2( void )
+void outputLogic1( void )
 {
     //A
     GPIOA->BSRR = 1<<(4+16);
@@ -87,7 +90,8 @@ int main(void)
     
     struct State state;
     state.state = TEST;
-    outputLogic0();
+    state.logic_level = 0;
+    state.prev_logic_level;
     
     /* Main program loop */
     state.output = ADC_Measure();
@@ -118,6 +122,37 @@ int main(void)
             printTest( state );
         }
         #endif
+        state.prev_logic_level = state.logic_level;
+        if ( Button_isPressed() )
+        {
+            state.logic_level++;
+            
+            if (state.logic_level > 2)
+                state.logic_level = 0;
+        }
+        
+        switch (state.logic_level)
+        {
+            case 0:
+                outputLogic0();
+            break;
+            case 1:
+                outputLogic1();
+            break;
+            case 2:
+                outputLogic2();
+            break;
+        }
+        
+        PB_LCD_GoToXY(15,1);
+        char buf[2];
+        snprintf( buf, 2, "%d", state.logic_level );
+        PB_LCD_WriteChar( buf[0] );
+        
+        if (state.prev_logic_level != state.logic_level )
+            PB_LCD_Clear();
+            PB_LCD_WriteString( "Waiting...", 10 );
+            state.output = ADC_Measure();
     }
 }
 

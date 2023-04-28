@@ -1,9 +1,12 @@
 #include "stm32f4xx_hal.h"
 #include "adc.h"
+#include <math.h>
 
 static ADC_HandleTypeDef hadc1;
 static ADC_HandleTypeDef hadc2;
 static ADC_HandleTypeDef hadc3;
+
+#define DC_OFFSET_MV ( 500 )
 
 /**
   * @brief GPIO Initialization Function
@@ -125,34 +128,86 @@ static inline uint16_t ADC_RawToMillivolt( uint16_t raw )
         return ( raw * 3300 ) / 4096;
 }
 
+static inline uint16_t ADC_MillivoltToRMS( uint16_t mv_peak )
+{
+    return sqrt( DC_OFFSET_MV * DC_OFFSET_MV + ( mv_peak * mv_peak ) / 2 );
+}
+
 /* Measures analog value on pin PC5 */
 struct ADC_Output ADC_Measure( void )
 {
 	struct ADC_Output output;
+    uint16_t a_temp = 0;
+    uint16_t b_temp = 0;
+    uint16_t c_temp = 0;
 	
 	/* chan 0 */
-	HAL_ADC_Start( &hadc1 );
-	HAL_ADC_PollForConversion( &hadc1, HAL_MAX_DELAY );
-        
+	
+    int timeout = 10;
+    while ( timeout != 0 )
+    {
+        HAL_ADC_Start( &hadc1 );
+        HAL_ADC_PollForConversion( &hadc1, 1000 );
         output.v_a = ADC_RawToMillivolt( HAL_ADC_GetValue( &hadc1 ) );
+        HAL_ADC_Stop( &hadc1 );
+        if ( output.v_a > a_temp )
+        {
+            a_temp = output.v_a;
+            timeout = 10;
+        } else
+        {
+            timeout--;
+        }
+    }
+    output.v_a = a_temp;
         
-	HAL_ADC_Stop( &hadc1 );
+	
 	
 	/* chan 1 */
-	HAL_ADC_Start( &hadc2 );
-	HAL_ADC_PollForConversion( &hadc2, HAL_MAX_DELAY );
-        
+	
+	timeout = 10;
+    while ( timeout != 0 )
+    {
+        HAL_ADC_Start( &hadc2 );
+        HAL_ADC_PollForConversion( &hadc2, 1000 );
         output.v_b = ADC_RawToMillivolt( HAL_ADC_GetValue( &hadc2 ) );
+        HAL_ADC_Stop( &hadc2 );
+        if ( output.v_b > b_temp )
+        {
+            b_temp = output.v_b;
+            timeout = 10;
+        } else
+        {
+            timeout--;
+        }
+    }
+    output.v_b = b_temp;
         
-	HAL_ADC_Stop( &hadc2 );
+	
 	
 	/* chan 2 */
-	HAL_ADC_Start( &hadc3 );
-	HAL_ADC_PollForConversion( &hadc3, HAL_MAX_DELAY );
+	
+	timeout = 10;
+    while ( timeout != 0 )
+    {
+        HAL_ADC_Start( &hadc3 );
+        HAL_ADC_PollForConversion( &hadc3, 1000 );
+        output.v_c = ADC_RawToMillivolt( HAL_ADC_GetValue( &hadc3 ) );
+        HAL_ADC_Stop( &hadc3 );
+        if ( output.v_c > c_temp )
+        {
+            c_temp = output.v_c;
+            timeout = 10;
+        } else
+        {
+            timeout--;
+        }
+    }
+    output.v_c = c_temp;
         
-        output.v_c =  ADC_RawToMillivolt( HAL_ADC_GetValue( &hadc3 ) );
-        
-	HAL_ADC_Stop( &hadc3 );
+	output.v_a = ADC_MillivoltToRMS( output.v_a );
+    output.v_b = ADC_MillivoltToRMS( output.v_b );
+    output.v_c = ADC_MillivoltToRMS( output.v_c );
 	
 	return output;
 }
