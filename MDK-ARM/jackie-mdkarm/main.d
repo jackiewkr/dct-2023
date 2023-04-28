@@ -31,6 +31,9 @@ jackie-mdkarm\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex
 jackie-mdkarm\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h
 jackie-mdkarm\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h
 jackie-mdkarm\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
-jackie-mdkarm\main.o: ../Core/Src/lcd.h
+jackie-mdkarm\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
+jackie-mdkarm\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
+jackie-mdkarm\main.o: ../Core/Src/PB_LCD_Drivers.h
 jackie-mdkarm\main.o: ../Core/Src/adc.h
+jackie-mdkarm\main.o: ../Core/Src/button.h
 jackie-mdkarm\main.o: c:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
