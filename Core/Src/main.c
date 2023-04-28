@@ -1,25 +1,31 @@
 #include "main.h"
-//#include "lcd.h"
-#include "PB_LCD_Drivers.h"
+#if 0 //switch to 0 if working using lab daughterboards
+    #include "lcd.h"
+#else
+    #include "PB_LCD_Drivers.h"
+#endif
 #include "adc.h"
 #include "button.h"
 
 #include <stdio.h>
 
-enum eState
-{
-    TEST = 0,
-    RESISTANCE,
-    CAPACITANCE,
-    INDUCTANCE
-};
+#define        TEST ( 0 )
+#define  RESISTANCE ( 1 )
+#define CAPACITANCE ( 2 )
+#define  INDUCTANCE ( 3 )
 
 struct State
 {
-    enum eState state; //current state of program (i.e. whats being displayed)
+    /* TEST = 0, RESISTANCE, CAPACITANCE, INDUCTANCE */
+    uint8_t state; //what's being measured
+    
+    /* 1K = 0, 10K, 100K, 1M for resistors*/
+    /* 1n = 0, 10n, 100n, 1u for capacitors */
+    /* 100u = 0, 1m for inductors */
+    uint8_t range; //range of current measurement
+    
     struct ADC_Output output;
 };
-
 
 /** Prototypes **/
 void SystemClock_Config(void);
@@ -27,6 +33,36 @@ void printTest( struct State );
 void printResistance( struct State );
 void printCapacitance( struct State );
 void printInductance( struct State );
+
+void outputLogic0( void )
+{
+    //A
+    GPIOA->BSRR = 1<<(4+16);
+    GPIOA->BSRR = 1<<(5+16);
+    //B
+    GPIOA->BSRR = 1<<(6+16);
+    GPIOA->BSRR = 1<<(7+16);
+}
+
+void outputLogic1( void )
+{
+    //A
+    GPIOA->BSRR = 1<<(4);
+    GPIOA->BSRR = 1<<(5);
+    //B
+    GPIOA->BSRR = 1<<(6+16);
+    GPIOA->BSRR = 1<<(7+16);
+}
+
+void outputLogic2( void )
+{
+    //A
+    GPIOA->BSRR = 1<<(4+16);
+    GPIOA->BSRR = 1<<(5+16);
+    //B
+    GPIOA->BSRR = 1<<(6);
+    GPIOA->BSRR = 1<<(7);
+}
 
 int main(void)
 {
@@ -39,21 +75,31 @@ int main(void)
     PB_LCD_Init();
     Button_init();
     
+    /* Initialize logic pins PA4, PA5, PA6, PC4, PC5 */
+    GPIOA->MODER |= GPIO_MODER_MODER4_0;
+    GPIOA->MODER |= GPIO_MODER_MODER5_0;
+    GPIOA->MODER |= GPIO_MODER_MODER6_0;
+    GPIOA->MODER |= GPIO_MODER_MODER7_0;
+    
     /* Simple Bootscreen */
     PB_LCD_Clear();
     PB_LCD_WriteString( "Loading...", 13 );
     
     struct State state;
     state.state = TEST;
+    outputLogic0();
     
     /* Main program loop */
+    state.output = ADC_Measure();
     while (1)
     {
         HAL_Delay(1000);
         PB_LCD_Clear();
         
-        state.output = ADC_Measure();
+        //state.output = ADC_Measure();
+        printTest( state );
         
+        #if 0
         if ( state.state == TEST )
         {
             printTest( state );
@@ -71,9 +117,7 @@ int main(void)
             state.state = TEST;
             printTest( state );
         }
-        
-        if ( Button_isPressed() )
-            state.state++;
+        #endif
     }
 }
 
@@ -85,10 +129,10 @@ void printTest( struct State st )
     PB_LCD_GoToXY( 0,0 );
     
     char top_buf[15];
-    snprintf( top_buf, 15, "A:%d B:%d", st.output.v_a, st.output.v_b );
+    snprintf( top_buf, 15, "A:%dm B:%dm", st.output.v_a, st.output.v_b );
     
     char bot_buf[16];
-    snprintf( bot_buf, 16, "C:%d", st.output.v_c );
+    snprintf( bot_buf, 16, "C:%dm", st.output.v_c );
     
     PB_LCD_WriteString( top_buf, 15 );
     PB_LCD_GoToXY(0,1);
