@@ -3,6 +3,7 @@
 #include "PB_LCD_Drivers.h"
 #include "adc.h"
 #include "button.h"
+#include "dac.h"
 
 #include <stdio.h>
 
