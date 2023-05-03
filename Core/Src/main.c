@@ -1,6 +1,6 @@
 #include "main.h"
-//#include "lcd.h"
-#include "PB_LCD_Drivers.h"
+#include "lcd.h"
+//#include "PB_LCD_Drivers.h"
 #include "adc.h"
 #include "button.h"
 #include "dac.h"
@@ -35,14 +35,22 @@ int main(void)
     HAL_Init();
     SystemClock_Config();
 
-    /* Initialize user libraries */
+    /* Initialize DAC for 10k wave */
+    LUT_Init();
+    DAC_Init();
+    DAC_Output10kWave();
+    
+    /* Initialise ADC */
     ADC_Init();
-    PB_LCD_Init();
+    
+    /* Initialise the LCD */
+    LCD_Init();
+    
+    /* Initialise the Button */
     Button_init();
     
     /* Simple Bootscreen */
-    PB_LCD_Clear();
-    PB_LCD_WriteString( "Loading...", 13 );
+    LCD_OverWriteString("Loading...", 13);
     
     struct State state;
     state.state = TEST;
@@ -51,7 +59,7 @@ int main(void)
     while (1)
     {
         HAL_Delay(1000);
-        PB_LCD_Clear();
+        LCD_Clear();
         
         state.output = ADC_Measure();
         
@@ -73,17 +81,17 @@ int main(void)
             printTest( state );
         }
         
-        if ( Button_isPressed() )
-            state.state++;
+        //if ( Button_isPressed() )
+            //state.state++;
     }
 }
 
 void printTest( struct State st )
 {
-    PB_LCD_GoToXY( 15, 0 );
-    PB_LCD_WriteChar( 'T' );
+    LCD_GoToXY( 15, 0 );
+    LCD_WriteChar( 'T' );
     
-    PB_LCD_GoToXY( 0,0 );
+    LCD_GoToXY( 0,0 );
     
     char top_buf[15];
     snprintf( top_buf, 15, "A:%d B:%d", st.output.v_a, st.output.v_b );
@@ -91,33 +99,33 @@ void printTest( struct State st )
     char bot_buf[16];
     snprintf( bot_buf, 16, "C:%d", st.output.v_c );
     
-    PB_LCD_WriteString( top_buf, 15 );
-    PB_LCD_GoToXY(0,1);
-    PB_LCD_WriteString( bot_buf, 16 );
+    LCD_WriteString( top_buf, 15 );
+    LCD_GoToXY(0,1);
+    LCD_WriteString( bot_buf, 16 );
 }
 
 void printResistance( struct State st )
 {
-    PB_LCD_GoToXY( 15, 0 );
-    PB_LCD_WriteChar( 222 );
+    LCD_GoToXY( 15, 0 );
+    LCD_WriteChar( 244 );
     
-    PB_LCD_GoToXY( 0,0 );
+    LCD_GoToXY( 0,0 );
 }
 
 void printCapacitance( struct State st )
 {
-    PB_LCD_GoToXY( 15, 0 );
-    PB_LCD_WriteChar( 'F' );
-    
-    PB_LCD_GoToXY( 0,0 );
+    LCD_GoToXY( 15, 0 );
+    LCD_WriteChar( 'F' );
+  
+    LCD_GoToXY( 0,0 );
 }
 
 void printInductance( struct State st )
 {
-    PB_LCD_GoToXY( 15, 0 );
-    PB_LCD_WriteChar( 'H' );
+    LCD_GoToXY( 15, 0 );
+    LCD_WriteChar( 'H' );
     
-    PB_LCD_GoToXY( 0,0 );
+    LCD_GoToXY( 0,0 );
 }
 
 /**

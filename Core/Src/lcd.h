@@ -52,6 +52,12 @@ void LCD_WriteString(char *s, int n);
 void LCD_OverWriteString(char *s, int n);
 
 /*
+ * Function moves the LCD cursor to a specific spot on the
+ * screen
+ */
+void LCD_GoToXY(int x, int y);
+
+/*
  * Converts a given voltage into a string and stores
  * it in the provided string, ready for output
  */
