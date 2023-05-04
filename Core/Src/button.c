@@ -10,7 +10,7 @@ void Button_init( void )
 	GPIO_InitTypeDef PushButton;
 	PushButton.Mode = GPIO_MODE_INPUT;
 	PushButton.Pin = GPIO_PIN_7;
-	PushButton.Pull = GPIO_NOPULL;
+	PushButton.Pull = GPIO_PULLDOWN;
 	HAL_GPIO_Init(GPIOA, &PushButton);
 }
 
