@@ -235,6 +235,18 @@ void LCD_OverWriteString(char *s, int n) {
 }
 
 /*
+ * Function moves the LCD cursor to a specific spot on the 
+ * screen
+ */
+void LCD_GoToXY(int x, int y) {
+    if (y == 0)
+        LCD_Write(INSTRUCTION, 0x80 | (x & 0x3F));
+    else if (y == 1)
+        LCD_Write(INSTRUCTION, 0xC0 | (x & 0x3F));
+}
+
+
+/*
  * Function takes a voltage in millivolts as an integer
  * and converts it to a string, ready to be passed to 
  * WriteString or OverWriteString

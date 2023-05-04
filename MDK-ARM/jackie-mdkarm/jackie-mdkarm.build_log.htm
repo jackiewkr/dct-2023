@@ -21,8 +21,8 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.9.0
 Dialog DLL:      TCM.DLL V1.53.0.0
  
 <h2>Project:</h2>
-\\userfs\jw4034\w2k\big\dct-2023\MDK-ARM\jackie-mdkarm.uvprojx
-Project File Date:  04/28/2023
+\\userfs\jw4034\w2k\Downloads\dct-2023-main (1)\dct-2023-main\MDK-ARM\jackie-mdkarm.uvprojx
+Project File Date:  05/03/2023
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'c:\Keil_v5\ARM\ARMCC\Bin'
@@ -30,11 +30,25 @@ Build target 'jackie-mdkarm'
 compiling main.c...
 ../Core/Src/button.h(3): warning:  #1-D: last line of file ends without a newline
   int Button_isPressed( void );
-../Core/Src/main.c: 1 warning, 0 errors
+../Core/Src/dac.h(5): warning:  #1295-D: Deprecated declaration LUT_Init - give arg types
+  void LUT_Init();
+../Core/Src/dac.h(8): warning:  #1295-D: Deprecated declaration DAC_Init - give arg types
+  void DAC_Init();
+../Core/Src/dac.h(11): warning:  #1295-D: Deprecated declaration DAC_Output1kWave - give arg types
+  void DAC_Output1kWave();
+../Core/Src/dac.h(14): warning:  #1295-D: Deprecated declaration DAC_Output10kWave - give arg types
+  void DAC_Output10kWave();
+../Core/Src/dac.h(17): warning:  #1295-D: Deprecated declaration DAC_Output100kWave - give arg types
+  void DAC_Output100kWave();
+../Core/Src/dac.h(19): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Src/main.c(107): warning:  #940-D: missing return statement at end of non-void function "autoRange" 
+  }
+../Core/Src/main.c: 8 warnings, 0 errors
 linking...
-Program Size: Code=6582 RO-data=442 RW-data=16 ZI-data=1848  
+Program Size: Code=17142 RO-data=906 RW-data=20 ZI-data=3196  
 FromELF: creating hex file...
-"jackie-mdkarm\jackie-mdkarm.axf" - 0 Error(s), 1 Warning(s).
+"jackie-mdkarm\jackie-mdkarm.axf" - 0 Error(s), 8 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -45,14 +59,14 @@ Package Vendor: ARM
    * Component: CORE Version: 5.5.0
 
 Package Vendor: Keil
-                http://www.keil.com/pack/Keil.STM32F4xx_DFP.2.16.0.pack
-                Keil.STM32F4xx_DFP.2.16.0
+                http://www.keil.com/pack/Keil.STM32F4xx_DFP.2.15.0.pack
+                Keil.STM32F4xx_DFP.2.15.0
                 STMicroelectronics STM32F4 Series Device Support, Drivers and Examples
 
 <h2>Collection of Component include folders:</h2>
   .\RTE\_jackie-mdkarm
   C:\KEIL_V5\ARM\PACK\ARM\CMSIS\5.8.0\CMSIS\Core\Include
-  C:\KEIL_V5\ARM\PACK\Keil\STM32F4xx_DFP\2.16.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
+  C:\KEIL_V5\ARM\PACK\Keil\STM32F4xx_DFP\2.15.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
 
 <h2>Collection of Component Files used:</h2>
 
